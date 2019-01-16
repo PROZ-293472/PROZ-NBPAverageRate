@@ -24,26 +24,26 @@ public abstract class PrepData {
 		answer.setEffectiveDates(
 				"to: " + clientResponse.getRates().get(clientResponse.getRates().size() - 1).getEffectiveDate()
 						+ "from: " + clientResponse.getRates().get(0).getEffectiveDate());
-		if(clientResponse.averageAsk()!=0) answer.setAverageAsk(clientResponse.averageAsk().toString());
+		if(!clientResponse.hasMid()) answer.setAverageAsk(clientResponse.averageAsk().toString());
 		else answer.setAverageAsk("No info");
-		if(clientResponse.averageBid()!=0) answer.setAverageBid(clientResponse.averageBid().toString());
+		if(!clientResponse.hasMid()) answer.setAverageBid(clientResponse.averageBid().toString());
 		else answer.setAverageBid("No info");
-		if(clientResponse.averageMid()!=0) answer.setAverageMid(clientResponse.averageMid().toString());
+		if(clientResponse.hasMid()) answer.setAverageMid(clientResponse.averageMid().toString());
 		else answer.setAverageMid("No info");
 		
 		String taskResponse = marshall(answer);
 		return taskResponse;
 	}
 
-	public static Rates unmarshall(String xmlAnswer) {
+	public static Rates unmarshall(String xml) {
 		try {
 			JAXBContext jContext = JAXBContext.newInstance(Rates.class, Rate.class);
 			Unmarshaller unmarshaller = jContext.createUnmarshaller();
-			StringReader reader = new StringReader(xmlAnswer);
+			StringReader reader = new StringReader(xml);
 			Rates rates = (Rates) unmarshaller.unmarshal(reader);
 			return rates;
 		} catch (Exception e) {
-			System.out.println("Unmarshell nie dziala");
+			e.printStackTrace();
 			return null;
 		}
 		
@@ -58,7 +58,7 @@ public abstract class PrepData {
 			marsh.marshal(answer, writer);
 			return writer.toString();
 		} catch (JAXBException e) {
-			System.out.println("Marshell nie dziala");
+			e.printStackTrace();
 			return "<?xml version=\"1.0\"?>" + "<info>Error while marshalling.</info>";
 		}
 	}

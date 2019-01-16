@@ -13,19 +13,27 @@ import API.PrepData;
 
 @Path("exchangerates/rates/{table}/{code}/{topCount}")
 public class GETResources {
-	
+
 	@GET
 	@Produces(MediaType.TEXT_XML)
-	public String xmlRequest(@PathParam("table") String table, @PathParam ("code") String code, @PathParam ("topCount") String topCount ) {
+	public String xmlRequest(@PathParam("table") String table, @PathParam("code") String code,
+			@PathParam("topCount") String topCount) {
+
 		String xml = PrepData.createTaskResponse(table, code, topCount);
 		return xml;
 	}
-	
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public String jsonRequest(@PathParam("table") String table, @PathParam ("code") String code, @PathParam ("topCount") String topCount) {
-		String xml = PrepData.createTaskResponse(table, code, topCount);
-		JSONObject json = XML.toJSONObject(xml);
-		return json.toString();
+	public String jsonRequest(@PathParam("table") String table, @PathParam("code") String code,
+			@PathParam("topCount") String topCount) {
+		try {
+			String xml = PrepData.createTaskResponse(table, code, topCount);
+			JSONObject json = XML.toJSONObject(xml);
+			return json.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "{\"blad\"}";
+		}
 	}
 }

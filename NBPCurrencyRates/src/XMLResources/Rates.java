@@ -5,12 +5,14 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "ExchangeRatesSeries")
 public class Rates {
 	private String table;
 	private String name;
 	private String code;
-	private List<Rate> rates = new ArrayList<Rate>();
+	private List<Rate> rates = new ArrayList<>();
 
 	public Rates() {
 	}
@@ -20,15 +22,23 @@ public class Rates {
 		this.name = name;
 		this.code = code;
 		this.rates = rates;
+		
 	}
-
+	
+	public boolean hasMid() {
+		for(Rate rate : this.rates) {
+			if (rate.getMid()==null) return false;
+		}
+		return true;
+	}
+	
 	public Double averageBid() {
 		Double sum = 0.0;
 		for (Rate r : rates) {
 			sum += r.getBid();
 		}
 		sum = sum / rates.size();
-		return sum > 0 ? sum : 0.0;
+		return sum != null ? sum : 0.0;
 	}
 
 	public Double averageMid() {
@@ -37,7 +47,7 @@ public class Rates {
 			sum += r.getMid();
 		}
 		sum = sum / rates.size();
-		return sum > 0 ? sum : 0.0;
+		return sum != 0.0 ? sum : null;
 	}
 
 	public Double averageAsk() {
@@ -46,7 +56,7 @@ public class Rates {
 			sum += r.getAsk();
 		}
 		sum = sum / rates.size();
-		return sum > 0 ? sum : 0.0;
+		return sum != null ? sum : 0.0;
 	}
 
 	@XmlElement(name = "Table")
